@@ -1,0 +1,47 @@
+body{
+    background-color: rgb(0, 0, 0);
+    /* color: rgb(33, 25, 13); */
+    color: black;
+    /* background-color: black; */
+}
+.chatbox{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+ 
+}
+input[type="text"]{
+    width: 95%;
+    padding: 20px;
+    border-radius: 50px;
+    margin-bottom:8px;
+    margin-right: 100px;
+
+}
+
+.message{
+    font-size: 3vh;
+    /* background-color: rgb(188, 210, 202); */
+    background-color: rgb(235, 235, 235);
+    /* color: white; */
+    margin-bottom: 8vh;
+    width: fit-content;
+    padding: 3vh;
+    border-radius:20px ;
+}
+
+.message strong{
+    margin-top: -77px;
+    margin-left: -20px;
+    position:absolute;
+    z-index: 100;
+    background-color: rgb(117, 141, 185);
+}
+
+.fromlabel{
+    /* color: rgb(24, 89, 91); */
+    /* color: white; */
+    margin-left: 10px;
+ margin-bottom: -10px;
+}
+
