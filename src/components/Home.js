@@ -98,6 +98,7 @@ const Home = () => {
         {messages.map((msg) => (
           <div key={msg.id} className={`message ${msg.msgfrom === username ? 'sent' : 'received'}`}>
             <strong>{msg.msgfrom}</strong>
+           
             {msg.message && <div className='fromlabel'>{msg.message}</div>}
             {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" />}
           </div>
