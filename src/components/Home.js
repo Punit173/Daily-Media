@@ -12,11 +12,11 @@ const Home = () => {
   const [image, setImage] = useState(null); // State to hold selected image
   const [selectedUser, setSelectedUser] = useState('recipientUser'); // State for selected user
 
-  const username = "akshat"; // Current user
+  const username = "recipientUser"; // Current user
   const password = "hello"; // Assuming password is stored as well
 
   // Example list of users for direct messages
-  const users = ['recipientUser', 'friend1', 'friend2', 'friend3'];
+  const users = ['recipientUser', 'friend1', 'friend2', 'friend3','akshat'];
 
   // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
@@ -131,16 +131,16 @@ const Home = () => {
         </div>
 
         {/* Chat Container */}
-        <div className="flex flex-col flex-grow bg-gray-100">
+        <div className="flex flex-col flex-grow ">
           <div className="flex-grow overflow-y-auto p-6 space-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`p-4 rounded-lg shadow-md max-w-lg ${msg.msgfrom === username ? 'ml-auto bg-gray-900 text-blue-300' : 'mr-auto bg-gray-300 text-gray-900'}`}
+                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-blue-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
               >
-                <strong className="block text-sm mb-1">{msg.msgfrom}</strong>
+                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-blue-500'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
-                {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-lg" />}
+                {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl" />}
               </div>
             ))}
           </div>
