@@ -2,27 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase/firebase'; // Adjust the import based on your file structure
 import { ref as dbRef, set, push, onValue } from "firebase/database";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import "./Home.css";
 import { FiSend } from 'react-icons/fi';  // Send icon
 import { RiImageAddFill } from 'react-icons/ri';  // Image upload icon
+import './Home.css';
 
 const Home = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]); // State to hold messages
   const [image, setImage] = useState(null); // State to hold selected image
+  const [selectedUser, setSelectedUser] = useState('recipientUser'); // State for selected user
 
-  // Get the current user's information from local storage
-  const username = "akshat";
+  const username = "akshat"; // Current user
   const password = "hello"; // Assuming password is stored as well
 
-  // Function to retrieve messages from Firebase and filter them based on the username
+  // Example list of users for direct messages
+  const users = ['recipientUser', 'friend1', 'friend2', 'friend3'];
+
+  // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
     const msgRef = dbRef(db, 'dailymedia/');
     onValue(msgRef, (snapshot) => {
       const data = snapshot.val();
       const loadedMessages = [];
       for (let id in data) {
-        if (data[id].msgfrom === username || data[id].msgto === username) {
+        if ((data[id].msgfrom === username && data[id].msgto === selectedUser) || 
+            (data[id].msgto === username && data[id].msgfrom === selectedUser)) {
           loadedMessages.push({ id, ...data[id] });
         }
       }
@@ -30,7 +34,7 @@ const Home = () => {
       loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
       setMessages(loadedMessages); // Set the filtered messages to state
     });
-  }, [username]);
+  }, [username, selectedUser]);
 
   // Handle image selection
   const handleImageChange = (e) => {
@@ -51,7 +55,7 @@ const Home = () => {
           user: username,
           pass: password,
           timestamp: timestamp,
-          msgto: 'recipientUser', // Change this value as needed
+          msgto: selectedUser,
           msgfrom: username,
           message: message || '', // Text message, if any
           imageUrl: '', // Will be updated if image is uploaded
@@ -92,39 +96,80 @@ const Home = () => {
     }
   };
 
-  return (
-    <div className="chat-container">
-      <div className='msg_parent'>
-        {messages.map((msg) => (
-          <div key={msg.id} className={`message ${msg.msgfrom === username ? 'sent' : 'received'}`}>
-            <strong>{msg.msgfrom}</strong>
-           
-            {msg.message && <div className='fromlabel'>{msg.message}</div>}
-            {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" />}
-          </div>
-        ))}
-      </div>
+  // Handle user selection for direct message
+  const handleUserSelect = (user) => {
+    setSelectedUser(user); // Change the recipient
+  };
 
-      <div className='chatbox'>
-        <input
-          type="text"
-          placeholder='Enter your message...'
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleSendMessage}
-        />
-        <label htmlFor="file-upload">
-          <RiImageAddFill size={30} />
-        </label>
-        <input
-          type="file"
-          id="file-upload"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        <button className='send-button' onClick={handleSendMessage}>
-          <FiSend size={20} />
-        </button>
+  return (
+    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-300 to-black text-gray-900">
+      {/* Navbar */}
+      <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md">
+        <div className="text-xl font-semibold">ChatApp</div>
+        <ul className="flex space-x-6">
+          <li className="hover:text-blue-400 cursor-pointer">Home</li>
+          <li className="hover:text-blue-400 cursor-pointer">Profile</li>
+          <li className="hover:text-blue-400 cursor-pointer">Settings</li>
+        </ul>
+      </nav>
+
+      <div className="flex flex-grow overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-64 bg-gray-800 text-blue-300 p-6 hidden md:block">
+          <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
+          <ul className="space-y-4">
+            {users.map((user) => (
+              <li
+                key={user}
+                className={`cursor-pointer ${user === selectedUser ? 'bg-blue-400 text-black' : ''} p-2 rounded`}
+                onClick={() => handleUserSelect(user)}
+              >
+                {user}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Chat Container */}
+        <div className="flex flex-col flex-grow bg-gray-100">
+          <div className="flex-grow overflow-y-auto p-6 space-y-4">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`p-4 rounded-lg shadow-md max-w-lg ${msg.msgfrom === username ? 'ml-auto bg-gray-900 text-blue-300' : 'mr-auto bg-gray-300 text-gray-900'}`}
+              >
+                <strong className="block text-sm mb-1">{msg.msgfrom}</strong>
+                {msg.message && <div>{msg.message}</div>}
+                {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-lg" />}
+              </div>
+            ))}
+          </div>
+
+          {/* Chatbox */}
+          <div className="flex items-center p-4 bg-gray-900 text-white">
+            <input
+              type="text"
+              placeholder="Enter your message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleSendMessage}
+              className="flex-grow p-2 rounded-lg bg-gray-800 text-white mr-2 outline-none"
+            />
+            <label htmlFor="file-upload" className="cursor-pointer">
+              <RiImageAddFill size={30} className="text-blue-400" />
+            </label>
+            <input
+              type="file"
+              id="file-upload"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            <button onClick={handleSendMessage} className="ml-2 p-2 rounded-full bg-blue-400 text-white hover:bg-blue-500">
+              <FiSend size={20} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
