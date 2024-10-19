@@ -11,6 +11,8 @@ const Home = () => {
   const [messages, setMessages] = useState([]); // State to hold messages
   const [image, setImage] = useState(null); // State to hold selected image
   const [selectedUser, setSelectedUser] = useState('recipientUser'); // State for selected user
+  const [showfullimg,setshowfullimg]=useState(false);
+  const [fullimgsrc,setfullimgsrc]=useState("");
 
   const username = "recipientUser"; // Current user
   const password = "hello"; // Assuming password is stored as well
@@ -140,10 +142,27 @@ const Home = () => {
               >
                 <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-pink-500'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
-                {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl" />}
+                {msg.imageUrl && <button onClick={()=>{setshowfullimg(true);setfullimgsrc(msg.imageUrl);}} className="mt-2"><img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl w-80" /></button>}
               </div>
             ))}
           </div>
+
+
+{/*  preview image      */}    
+          {showfullimg && (
+  <div
+    onClick={() => setshowfullimg(false)} // Dismiss when clicking outside
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+  >
+    <img
+      src={fullimgsrc}
+      alt="Uploaded"
+      onClick={(e) => e.stopPropagation()} // Prevent dismissal when clicking the image
+      className="max-w-full max-h-full object-contain"
+    />
+  </div>
+)}
+
 
           {/* Chatbox */}
           <div className="flex items-center p-4 bg-gray-900 text-white opacity-60">
