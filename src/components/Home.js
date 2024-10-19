@@ -102,26 +102,26 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-300 to-black text-gray-900">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-pink-900 to-black text-gray-900">
       {/* Navbar */}
       <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md">
         <div className="text-xl font-semibold">ChatApp</div>
         <ul className="flex space-x-6">
-          <li className="hover:text-blue-400 cursor-pointer">Home</li>
-          <li className="hover:text-blue-400 cursor-pointer">Profile</li>
-          <li className="hover:text-blue-400 cursor-pointer">Settings</li>
+          <li className="hover:text-pink-600 cursor-pointer">Home</li>
+          <li className="hover:text-pink-600 cursor-pointer">Profile</li>
+          <li className="hover:text-pink-600 cursor-pointer">Settings</li>
         </ul>
       </nav>
 
       <div className="flex flex-grow overflow-hidden">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-800 text-blue-300 p-6 hidden md:block">
+        <div className="w-64 bg-gray-800 text-pink-300 p-6 hidden md:block">
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
               <li
                 key={user}
-                className={`cursor-pointer ${user === selectedUser ? 'bg-blue-400 text-black' : ''} p-2 rounded`}
+                className={`cursor-pointer ${user === selectedUser ? 'bg-pink-600 text-black' : ''} p-2 rounded`}
                 onClick={() => handleUserSelect(user)}
               >
                 {user}
@@ -136,9 +136,9 @@ const Home = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-blue-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
+                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-pink-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
               >
-                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-blue-500'} mb-1`}>{msg.msgfrom}</strong>
+                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-pink-500'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
                 {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl" />}
               </div>
@@ -156,7 +156,7 @@ const Home = () => {
               className="flex-grow p-2 rounded-lg bg-gray-800 text-white mr-2 outline-none"
             />
             <label htmlFor="file-upload" className="cursor-pointer">
-              <RiImageAddFill size={30} className="text-blue-400" />
+              <RiImageAddFill size={30} className="text-pink-600" />
             </label>
             <input
               type="file"
@@ -165,7 +165,7 @@ const Home = () => {
               onChange={handleImageChange}
               className="hidden"
             />
-            <button onClick={handleSendMessage} className="ml-2 p-2 rounded-full bg-blue-400 text-white hover:bg-blue-500">
+            <button onClick={handleSendMessage} className="ml-2 p-2 rounded-full bg-pink-600 text-white hover:bg-pink-500">
               <FiSend size={20} />
             </button>
           </div>

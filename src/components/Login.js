@@ -47,8 +47,21 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="w-96 p-8 bg-gray-800 rounded-lg shadow-xl">
+    <div className="relative h-screen flex justify-center items-center">
+
+      {/* Background video */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+        autoPlay
+        muted
+        loop
+      >
+        <source src="\loginbg.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Login form container */}
+      <div className="w-96 p-8 bg-gray-800 rounded-lg shadow-xl z-20 bg-opacity-80">
         <h2 className="text-2xl text-center text-white mb-8">
           {isSignup ? "Sign Up" : "Login"}
         </h2>
@@ -108,7 +121,7 @@ const Login = () => {
         {/* Submit Button */}
         <button
           onClick={handleAuth}
-          className="w-full py-3 mt-4 bg-blue-500 rounded-lg text-white text-lg hover:bg-blue-600 transition duration-300"
+          className="w-full py-3 mt-4 bg-pink-800 rounded-lg text-white text-lg hover:bg-blue-600 transition duration-300"
         >
           {isSignup ? "Sign Up" : "Login"}
         </button>
@@ -117,7 +130,7 @@ const Login = () => {
         <p className="text-center text-white mt-4">
           {isSignup ? "Already have an account? " : "Don't have an account? "}
           <span
-            className="text-blue-400 font-bold cursor-pointer hover:underline"
+            className="text-pink-600 font-bold cursor-pointer hover:underline"
             onClick={toggleAuthMode}
           >
             {isSignup ? "Login" : "Sign up"}
