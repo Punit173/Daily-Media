@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { FaUserAlt, FaLock, FaEnvelope } from "react-icons/fa";
 import { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase/firebase.js';
 import { FcGoogle } from 'react-icons/fc';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const toggleAuthMode = () => {
     setIsSignup(!isSignup);
@@ -18,6 +21,7 @@ const Login = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       alert("Logged in with Google");
+      navigate('/post'); // Redirect to Post.js after successful login
     } catch (error) {
       console.error("Google sign-in error:", error);
       alert(error.message);
@@ -35,6 +39,7 @@ const Login = () => {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login successful");
       }
+      navigate('/post'); // Redirect to Post.js after successful login/signup
     } catch (error) {
       console.error("Firebase Auth error:", error);
       alert(error.message);
@@ -47,7 +52,6 @@ const Login = () => {
         <h2 className="text-2xl text-center text-white mb-8">
           {isSignup ? "Sign Up" : "Login"}
         </h2>
-
 
         {/* Email Input */}
         {isSignup && (
@@ -92,6 +96,7 @@ const Login = () => {
             className="w-full bg-transparent border-none outline-none text-white"
           />
         </div>
+        
         {/* Google Authentication Button */}
         <button
           onClick={handleGoogleLogin}
