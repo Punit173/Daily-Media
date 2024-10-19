@@ -104,9 +104,22 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-pink-900 to-black text-gray-900">
+    <div className="relative flex flex-col h-screen  text-gray-900">
+
+
+
+        {/* Background video */}
+        <video
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+        autoPlay
+        muted
+        loop
+      >
+        <source src="\chatbg.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       {/* Navbar */}
-      <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md opacity-60">
+      <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md opacity-70">
         <div className="text-xl font-semibold">DailyMedia</div>
         <ul className="flex space-x-6">
           <li className="hover:text-pink-600 cursor-pointer">Home</li>
@@ -117,7 +130,7 @@ const Home = () => {
 
       <div className="flex flex-grow overflow-hidden ">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-800 text-pink-300 p-6 hidden md:block opacity-60">
+        <div className="w-64 bg-gray-800 text-pink-300 p-6 hidden md:block opacity-80">
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
