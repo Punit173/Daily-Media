@@ -104,8 +104,8 @@ const Home = () => {
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-pink-900 to-black text-gray-900">
       {/* Navbar */}
-      <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md">
-        <div className="text-xl font-semibold">ChatApp</div>
+      <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md opacity-60">
+        <div className="text-xl font-semibold">DailyMedia</div>
         <ul className="flex space-x-6">
           <li className="hover:text-pink-600 cursor-pointer">Home</li>
           <li className="hover:text-pink-600 cursor-pointer">Profile</li>
@@ -113,9 +113,9 @@ const Home = () => {
         </ul>
       </nav>
 
-      <div className="flex flex-grow overflow-hidden">
+      <div className="flex flex-grow overflow-hidden ">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-800 text-pink-300 p-6 hidden md:block">
+        <div className="w-64 bg-gray-800 text-pink-300 p-6 hidden md:block opacity-60">
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
@@ -146,7 +146,7 @@ const Home = () => {
           </div>
 
           {/* Chatbox */}
-          <div className="flex items-center p-4 bg-gray-900 text-white">
+          <div className="flex items-center p-4 bg-gray-900 text-white opacity-60">
             <input
               type="text"
               placeholder="Enter your message..."
