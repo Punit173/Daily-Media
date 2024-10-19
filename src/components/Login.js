@@ -21,7 +21,7 @@ const Login = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       alert("Logged in with Google");
-      navigate('/post'); // Redirect to Post.js after successful login
+      navigate('/home'); // Redirect to Post.js after successful login
     } catch (error) {
       console.error("Google sign-in error:", error);
       alert(error.message);
