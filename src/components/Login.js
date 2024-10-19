@@ -121,7 +121,7 @@ const Login = () => {
         {/* Submit Button */}
         <button
           onClick={handleAuth}
-          className="w-full py-3 mt-4 bg-pink-800 rounded-lg text-white text-lg hover:bg-blue-600 transition duration-300"
+          className="w-full py-3 mt-4 bg-green-800 rounded-lg text-white text-lg hover:bg-blue-600 transition duration-300"
         >
           {isSignup ? "Sign Up" : "Login"}
         </button>
@@ -130,7 +130,7 @@ const Login = () => {
         <p className="text-center text-white mt-4">
           {isSignup ? "Already have an account? " : "Don't have an account? "}
           <span
-            className="text-pink-600 font-bold cursor-pointer hover:underline"
+            className="text-green-600 font-bold cursor-pointer hover:underline"
             onClick={toggleAuthMode}
           >
             {isSignup ? "Login" : "Sign up"}
