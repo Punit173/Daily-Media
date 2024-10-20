@@ -186,7 +186,7 @@ const Home = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-yellow-300 ' : 'ml-auto bg-yellow-600 text-white'}`}
+                className={`p-4 rounded-xl shadow-md max-w-fit text-left opacity-90 ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-yellow-300 ' : 'ml-auto bg-yellow-600 text-white'}`}
               >
                 <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-black'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
