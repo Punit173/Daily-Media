@@ -1,3 +1,5 @@
+/* right now only people who messaged before will show in side bar */
+
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase/firebase'; // Adjust the import based on your file structure
 import { ref as dbRef, set, push, onValue } from "firebase/database";
@@ -10,15 +12,15 @@ const Home = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]); // State to hold messages
   const [image, setImage] = useState(null); // State to hold selected image
-  const [selectedUser, setSelectedUser] = useState('recipientUser'); // State for selected user
+  const [selectedUser, setSelectedUser] = useState('nonselecteduser'); // State for selected user
   const [showfullimg,setshowfullimg]=useState(false);
   const [fullimgsrc,setfullimgsrc]=useState("");
+   // Example list of users for direct messages
+   const [users,setusers]=useState([]);
 
-  const username = "recipientUser"; // Current user
-  const password = "hello"; // Assuming password is stored as well
+  const username = localStorage.getItem("email"); // Current user
 
-  // Example list of users for direct messages
-  const users = ['recipientUser', 'friend1', 'friend2', 'friend3','akshat'];
+ 
 
   // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
@@ -26,18 +28,29 @@ const Home = () => {
     onValue(msgRef, (snapshot) => {
       const data = snapshot.val();
       const loadedMessages = [];
+      const newUsers = new Set(users); // Using a Set to avoid duplicates
+  
       for (let id in data) {
-        if ((data[id].msgfrom === username && data[id].msgto === selectedUser) || 
-            (data[id].msgto === username && data[id].msgfrom === selectedUser)) {
+        const { msgfrom, msgto,user } = data[id];
+  
+        // Add users to the Set set was used to preventt duplication of users
+        newUsers.add(user);
+  
+        if ((msgfrom === username && msgto === selectedUser) || 
+            (msgto === username && msgfrom === selectedUser)) {
           loadedMessages.push({ id, ...data[id] });
         }
       }
-      // Sort by timestamp to display in order of upload
+  
+      // Update users state
+      setusers(Array.from(newUsers));
+  
+      // Sort messages by timestamp
       loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
       setMessages(loadedMessages); // Set the filtered messages to state
     });
-  }, [username, selectedUser]);
-
+  }, [username, selectedUser]); // Ensure necessary dependencies are included
+  
   // Handle image selection
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
@@ -55,7 +68,6 @@ const Home = () => {
 
         const messageData = {
           user: username,
-          pass: password,
           timestamp: timestamp,
           msgto: selectedUser,
           msgfrom: username,
@@ -134,13 +146,14 @@ const Home = () => {
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
-              <li
-                key={user}
-                className={`cursor-pointer ${user === selectedUser ? 'bg-yellow-600 text-black' : ''} p-2 rounded`}
-                onClick={() => handleUserSelect(user)}
-              >
-                {user}
-              </li>
+             <li
+             key={user}
+             className={`cursor-pointer ${user === selectedUser ? 'bg-yellow-600 text-black' : ''} p-2 rounded overflow-hidden text-ellipsis whitespace-nowrap`}
+             onClick={() => handleUserSelect(user)}
+           >
+             {user}
+           </li>
+           
             ))}
           </ul>
         </div>
@@ -151,9 +164,9 @@ const Home = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-yellow-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
+                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-yellow-300 ' : 'ml-auto bg-yellow-600 text-white'}`}
               >
-                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-yellow-500'} mb-1`}>{msg.msgfrom}</strong>
+                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-black'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
                 {msg.imageUrl && <button onClick={()=>{setshowfullimg(true);setfullimgsrc(msg.imageUrl);}} className="mt-2"><img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl w-80" /></button>}
               </div>

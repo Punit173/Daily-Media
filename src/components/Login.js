@@ -1,8 +1,20 @@
+/* punit bhai name ka anhi bhi kuch use nhi hura kyuki woh kahi store nh i hora */
+
+
+
 import React, { useState } from "react";
 import { FaUserAlt, FaLock, FaEnvelope } from "react-icons/fa";
-import { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase/firebase.js';
+import {
+  auth,
+  googleProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  dbf, // Ensure this imports your Firestore instance
+} from '../firebase/firebase.js';
 import { FcGoogle } from 'react-icons/fc';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import { setDoc, doc } from "firebase/firestore"; // Import Firestore functions
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -10,36 +22,46 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const toggleAuthMode = () => {
     setIsSignup(!isSignup);
   };
 
-  // Google Authentication
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       alert("Logged in with Google");
-      navigate('/home'); // Redirect to Post.js after successful login
+      navigate('/home'); 
+    
     } catch (error) {
       console.error("Google sign-in error:", error);
       alert(error.message);
     }
   };
 
-  // Normal Sign In / Sign Up
   const handleAuth = async (e) => {
     e.preventDefault();
     try {
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Sign up successful");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save user data in Firestore
+        await setDoc(doc(dbf, "users", user.uid), {
+          username: username,
+          email: user.email,
+          createdAt: new Date(),
+        });
+
+        alert("Sign up successful and user data saved to Firestore");
       } else {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Login successful");
       }
-      navigate('/post'); // Redirect to Post.js after successful login/signup
+
+      localStorage.setItem("email",email);
+      navigate('/home');
     } catch (error) {
       console.error("Firebase Auth error:", error);
       alert(error.message);
@@ -48,8 +70,6 @@ const Login = () => {
 
   return (
     <div className="relative h-screen flex justify-center items-center">
-
-      {/* Background video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover -z-10"
         autoPlay
@@ -60,14 +80,12 @@ const Login = () => {
         Your browser does not support the video tag.
       </video>
 
-      {/* Login form container */}
       <div className="w-96 p-8 bg-gray-800 rounded-lg shadow-xl z-20 bg-opacity-80">
         <h2 className="text-2xl text-center text-white mb-8">
           {isSignup ? "Sign Up" : "Login"}
         </h2>
 
-        {/* Email Input */}
-        {isSignup && (
+        
           <div className="flex items-center mb-6 bg-gray-700 rounded-md p-3">
             <div className="text-gray-400 mr-2">
               <FaEnvelope />
@@ -80,9 +98,8 @@ const Login = () => {
               className="w-full bg-transparent border-none outline-none text-white"
             />
           </div>
-        )}
-
-        {/* Username Input */}
+        
+{isSignup && 
         <div className="flex items-center mb-6 bg-gray-700 rounded-md p-3">
           <div className="text-gray-400 mr-2">
             <FaUserAlt />
@@ -95,8 +112,8 @@ const Login = () => {
             className="w-full bg-transparent border-none outline-none text-white"
           />
         </div>
+}
 
-        {/* Password Input */}
         <div className="flex items-center mb-6 bg-gray-700 rounded-md p-3">
           <div className="text-gray-400 mr-2">
             <FaLock />
@@ -109,8 +126,7 @@ const Login = () => {
             className="w-full bg-transparent border-none outline-none text-white"
           />
         </div>
-        
-        {/* Google Authentication Button */}
+
         <button
           onClick={handleGoogleLogin}
           className="w-full py-3 mb-4 bg-white text-gray-700 flex items-center justify-center rounded-lg shadow hover:bg-gray-100 transition duration-300"
@@ -118,7 +134,6 @@ const Login = () => {
           <FcGoogle className="mr-2" /> Sign {isSignup ? "Up" : "In"} with Google
         </button>
 
-        {/* Submit Button */}
         <button
           onClick={handleAuth}
           className="w-full py-3 mt-4 bg-green-800 rounded-lg text-white text-lg hover:bg-blue-600 transition duration-300"
@@ -126,7 +141,6 @@ const Login = () => {
           {isSignup ? "Sign Up" : "Login"}
         </button>
 
-        {/* Toggle Between Login/Signup */}
         <p className="text-center text-white mt-4">
           {isSignup ? "Already have an account? " : "Don't have an account? "}
           <span
