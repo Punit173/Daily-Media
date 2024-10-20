@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '../firebase/firebase'; // Adjust the import based on your file structure
+import { db, storage, auth } from '../firebase/firebase'; // Adjust the import based on your file structure
 import { ref as dbRef, set, push, onValue } from "firebase/database";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { signOut } from "firebase/auth"; // To handle logout
 import { FiSend } from 'react-icons/fi';  // Send icon
 import { RiImageAddFill } from 'react-icons/ri';  // Image upload icon
+import Login from './Login'
 import './Home.css';
 
 const Home = () => {
@@ -11,30 +13,42 @@ const Home = () => {
   const [messages, setMessages] = useState([]); // State to hold messages
   const [image, setImage] = useState(null); // State to hold selected image
   const [selectedUser, setSelectedUser] = useState('recipientUser'); // State for selected user
+  const [currentUser, setCurrentUser] = useState(null); // Holds the logged-in user
 
-  const username = "recipientUser"; // Current user
-  const password = "hello"; // Assuming password is stored as well
+  const users = ['recipientUser', 'friend1', 'friend2', 'friend3', 'akshat'];
 
-  // Example list of users for direct messages
-  const users = ['recipientUser', 'friend1', 'friend2', 'friend3','akshat'];
+  // Get the logged-in user from Firebase Auth
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
+    if (!currentUser) return;
+
     const msgRef = dbRef(db, 'dailymedia/');
     onValue(msgRef, (snapshot) => {
       const data = snapshot.val();
       const loadedMessages = [];
       for (let id in data) {
-        if ((data[id].msgfrom === username && data[id].msgto === selectedUser) || 
-            (data[id].msgto === username && data[id].msgfrom === selectedUser)) {
+        if (
+          (data[id].msgfrom === currentUser.uid && data[id].msgto === selectedUser) || 
+          (data[id].msgto === currentUser.uid && data[id].msgfrom === selectedUser)
+        ) {
           loadedMessages.push({ id, ...data[id] });
         }
       }
-      // Sort by timestamp to display in order of upload
       loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
-      setMessages(loadedMessages); // Set the filtered messages to state
+      setMessages(loadedMessages);
     });
-  }, [username, selectedUser]);
+  }, [currentUser, selectedUser]);
 
   // Handle image selection
   const handleImageChange = (e) => {
@@ -52,13 +66,11 @@ const Home = () => {
         const newMessageRef = push(msgRef);
 
         const messageData = {
-          user: username,
-          pass: password,
-          timestamp: timestamp,
+          msgfrom: currentUser.uid,
           msgto: selectedUser,
-          msgfrom: username,
           message: message || '', // Text message, if any
           imageUrl: '', // Will be updated if image is uploaded
+          timestamp,
         };
 
         if (image) {
@@ -75,7 +87,7 @@ const Home = () => {
             },
             () => {
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                messageData.imageUrl = downloadURL; // Set the image URL
+                messageData.imageUrl = downloadURL;
                 set(newMessageRef, messageData).then(() => {
                   setMessage(''); // Clear input after sending
                   setImage(null); // Clear image after sending
@@ -101,6 +113,21 @@ const Home = () => {
     setSelectedUser(user); // Change the recipient
   };
 
+  // Handle logout
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("User logged out successfully");
+      })
+      .catch((error) => {
+        console.error("Error logging out:", error);
+      });
+  };
+
+  if (!currentUser) {
+    return <Login/>;
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-blue-300 to-black text-gray-900">
       {/* Navbar */}
@@ -110,6 +137,7 @@ const Home = () => {
           <li className="hover:text-blue-400 cursor-pointer">Home</li>
           <li className="hover:text-blue-400 cursor-pointer">Profile</li>
           <li className="hover:text-blue-400 cursor-pointer">Settings</li>
+          <li className="hover:text-red-400 cursor-pointer" onClick={handleLogout}>Logout</li> {/* Logout button */}
         </ul>
       </nav>
 
@@ -131,14 +159,14 @@ const Home = () => {
         </div>
 
         {/* Chat Container */}
-        <div className="flex flex-col flex-grow ">
+        <div className="flex flex-col flex-grow">
           <div className="flex-grow overflow-y-auto p-6 space-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-blue-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
+                className={`p-4 rounded-xl shadow-md max-w-fit text-left ${msg.msgfrom === currentUser.uid ? 'mr-auto bg-gray-900 text-blue-300 ' : 'ml-auto bg-gray-300 text-gray-900'}`}
               >
-                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-blue-500'} mb-1`}>{msg.msgfrom}</strong>
+                <strong className={`block text-xl ${msg.msgfrom === currentUser.uid ? 'text-white' : 'text-blue-500'} mb-1`}>{msg.msgfrom === currentUser.uid ? 'You' : selectedUser}</strong>
                 {msg.message && <div>{msg.message}</div>}
                 {msg.imageUrl && <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl" />}
               </div>
