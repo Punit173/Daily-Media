@@ -1,0 +1,48 @@
+[33m800917f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: pull origin main --rebase (finish): returning to refs/heads/main
+[33m800917f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{1}: pull origin main --rebase (start): checkout 800917f584cc9a1727fe4636743bf0aaa568c789
+[33m47cb2e4[m HEAD@{2}: commit: sidebar showing (me) if user wants to talk to himself
+[33m3f10a44[m HEAD@{3}: commit: added sidebar for small phones
+[33m3983ff9[m HEAD@{4}: commit: added sidebar for small phones
+[33mb2e7e29[m HEAD@{5}: commit: chat logic added after login
+[33m8021dc6[m HEAD@{6}: commit: some changes
+[33m5290684[m HEAD@{7}: commit: video in chatbg
+[33m4c89759[m HEAD@{8}: commit: preview images onclick added
+[33mc8d6db7[m HEAD@{9}: commit: some changes in ui
+[33maf0b0de[m HEAD@{10}: commit: login page video
+[33mf140935[m HEAD@{11}: checkout: moving from main to main
+[33mf140935[m HEAD@{12}: commit: 23:17 sat push
+[33m6094a0d[m HEAD@{13}: commit: dm chat
+[33m158058d[m HEAD@{14}: commit: dm ui basic done
+[33me655b3d[m HEAD@{15}: reset: moving to origin/main
+[33md3c2983[m HEAD@{16}: reset: moving to origin/main
+[33m239cdd4[m HEAD@{17}: reset: moving to origin/main
+[33mfce7536[m HEAD@{18}: reset: moving to origin/main
+[33mb0627d6[m HEAD@{19}: commit: login page no backend
+[33m9be61d3[m HEAD@{20}: commit: changes in ui
+[33m1b8ab4d[m HEAD@{21}: commit: ui alignment fixed
+[33m4a3df1f[m HEAD@{22}: commit: design chnages
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{23}: checkout: moving from akshatbranch to main
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{24}: checkout: moving from main to akshatbranch
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{25}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{26}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{27}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{28}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{29}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{30}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{31}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{32}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{33}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{34}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{35}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{36}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{37}: checkout: moving from akshatbranch to main
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{38}: checkout: moving from main to akshatbranch
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{39}: checkout: moving from main to main
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{40}: checkout: moving from akshatbranch to main
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{41}: checkout: moving from main to akshatbranch
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{42}: rebase (abort): returning to refs/heads/main
+[33m921e2d7[m HEAD@{43}: pull origin main --rebase (start): checkout 921e2d730cd7f6f94b1528fd2e38b8b66258eec3
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{44}: checkout: moving from akshatbranch to main
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{45}: checkout: moving from master to akshatbranch
+[33m025df8b[m[33m ([m[1;31morigin/akshatbranch[m[33m, [m[1;32mmaster[m[33m, [m[1;32makshatbranch[m[33m)[m HEAD@{46}: commit: initial push
+[33m4eabd6b[m HEAD@{47}: commit (initial): Initialize project using Create React App

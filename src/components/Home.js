@@ -1,13 +1,13 @@
-/* right now only people who messaged before will show in side bar */
-
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '../firebase/firebase'; // Adjust the import based on your file structure
+import { db, storage, auth } from '../firebase/firebase'; // Adjust the import based on your file structure
 import { ref as dbRef, set, push, onValue } from "firebase/database";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { signOut } from "firebase/auth"; // To handle logout
 import { FiSend } from 'react-icons/fi';  // Send icon
 import { RiImageAddFill } from 'react-icons/ri';  // Image upload icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import Login from './Login'; // Assuming Login component is used for user login
 import './Home.css';
 
 const Home = () => {
@@ -15,64 +15,54 @@ const Home = () => {
   const [messages, setMessages] = useState([]); // State to hold messages
   const [image, setImage] = useState(null); // State to hold selected image
   const [selectedUser, setSelectedUser] = useState('nonselecteduser'); // State for selected user
-  const [showfullimg,setshowfullimg]=useState(false);
-  const [fullimgsrc,setfullimgsrc]=useState("");
-   // Example list of users for direct messages
-  const [users,setusers]=useState([]);
-// Current user
-  const username = localStorage.getItem("email"); 
-  //for small screen replace with button for sidebar
-  const [sidebar,setsidebar]=useState(true);
-  //content for sidebar visible on click of sidebar button using this usestate
-  const [sidebarcont,setsidebarcont]=useState(true);
+  const [showfullimg, setshowfullimg] = useState(false);
+  const [fullimgsrc, setfullimgsrc] = useState("");
+  const [users, setusers] = useState([]);
+  const [sidebar, setsidebar] = useState(true);
+  const [sidebarcont, setsidebarcont] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null); // Holds the logged-in user
+  
+  const username = localStorage.getItem("email");
 
- 
+  // Get the logged-in user from Firebase Auth
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
-    //check width of screen
     const screenWidth = window.innerWidth;
-    if (screenWidth > 768) {
-      setsidebar(false); // Set sidebar to false for smaller screens
-    } else {
-      setsidebar(true); // Set sidebar to true for larger screens
-    }
-    console.log(sidebar); // Note: This may not log the updated state immediately
-    
-    //////////////////////
-
-
-
-
-
+    setsidebar(screenWidth < 768);
 
     const msgRef = dbRef(db, 'dailymedia/');
     onValue(msgRef, (snapshot) => {
       const data = snapshot.val();
       const loadedMessages = [];
       const newUsers = new Set(users); // Using a Set to avoid duplicates
-  
+
       for (let id in data) {
-        const { msgfrom, msgto,user } = data[id];
-  
-        // Add users to the Set set was used to preventt duplication of users
+        const { msgfrom, msgto, user } = data[id];
         newUsers.add(user);
-  
+
         if ((msgfrom === username && msgto === selectedUser) || 
             (msgto === username && msgfrom === selectedUser)) {
           loadedMessages.push({ id, ...data[id] });
         }
       }
-  
-      // Update users state
+
       setusers(Array.from(newUsers));
-  
-      // Sort messages by timestamp
       loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
-      setMessages(loadedMessages); // Set the filtered messages to state
+      setMessages(loadedMessages);
     });
-  }, [username, selectedUser]); // Ensure necessary dependencies are included
-  
+  }, [username, selectedUser]);
+
   // Handle image selection
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
@@ -111,7 +101,7 @@ const Home = () => {
             },
             () => {
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                messageData.imageUrl = downloadURL; // Set the image URL
+                messageData.imageUrl = downloadURL;
                 set(newMessageRef, messageData).then(() => {
                   setMessage(''); // Clear input after sending
                   setImage(null); // Clear image after sending
@@ -137,13 +127,25 @@ const Home = () => {
     setSelectedUser(user); // Change the recipient
   };
 
+  // Handle logout
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("User logged out successfully");
+      })
+      .catch((error) => {
+        console.error("Error logging out:", error);
+      });
+  };
+
+  if (!currentUser) {
+    return <Login />;
+  }
+
   return (
     <div className="relative flex flex-col h-screen  text-gray-900">
-
-
-
-        {/* Background video */}
-        <video
+      {/* Background video */}
+      <video
         className="absolute top-0 left-0 w-full h-full object-cover -z-10"
         autoPlay
         muted
@@ -152,13 +154,23 @@ const Home = () => {
         <source src="\chatbg.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+      
       {/* Navbar */}
       <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md opacity-70">
-        {sidebar ? (<button onClick={()=>{setsidebarcont(!sidebarcont)}}><FontAwesomeIcon icon={faBars} /></button>):(<div className="text-xl font-semibold">DailyMedia</div>)}
+        {sidebar ? (
+          <button onClick={() => setsidebarcont(!sidebarcont)}>
+            <FontAwesomeIcon icon={faBars} />
+          </button>
+        ) : (
+          <div className="text-xl font-semibold">DailyMedia</div>
+        )}
         <ul className="flex space-x-6">
           <li className="hover:text-yellow-600 cursor-pointer">Home</li>
           <li className="hover:text-yellow-600 cursor-pointer">Profile</li>
           <li className="hover:text-yellow-600 cursor-pointer">Settings</li>
+          <li className="hover:text-red-400 cursor-pointer" onClick={handleLogout}>
+            Logout
+          </li> {/* Logout button */}
         </ul>
       </nav>
 
@@ -168,14 +180,13 @@ const Home = () => {
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
-             <li
-             key={user}
-             className={`cursor-pointer ${user === selectedUser ? 'bg-yellow-600 text-black' : ''} p-2 rounded overflow-hidden text-ellipsis whitespace-nowrap`}
-             onClick={() => handleUserSelect(user)}
-           >
-             {(username===user)?"Me":user}
-           </li>
-           
+              <li
+                key={user}
+                className={`cursor-pointer ${user === selectedUser ? 'bg-yellow-600 text-black' : ''} p-2 rounded overflow-hidden text-ellipsis whitespace-nowrap`}
+                onClick={() => handleUserSelect(user)}
+              >
+                {(username === user) ? "Me" : user}
+              </li>
             ))}
           </ul>
         </div>
@@ -188,52 +199,54 @@ const Home = () => {
                 key={msg.id}
                 className={`p-4 rounded-xl shadow-md max-w-fit text-left opacity-90 ${msg.msgfrom === username ? 'mr-auto bg-gray-900 text-yellow-300 ' : 'ml-auto bg-yellow-600 text-white'}`}
               >
-                <strong className={`block text-xl ${msg.msgfrom===username ? 'text-white':'text-black'} mb-1`}>{msg.msgfrom}</strong>
+                <strong className={`block text-xl ${msg.msgfrom === username ? 'text-white' : 'text-black'} mb-1`}>{msg.msgfrom}</strong>
                 {msg.message && <div>{msg.message}</div>}
-                {msg.imageUrl && <button onClick={()=>{setshowfullimg(true);setfullimgsrc(msg.imageUrl);}} className="mt-2"><img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl w-80" /></button>}
+                {msg.imageUrl && <button onClick={() => { setshowfullimg(true); setfullimgsrc(msg.imageUrl); }} className="mt-2">
+                  <img src={msg.imageUrl} alt="Uploaded" className="mt-2 rounded-xl w-80" />
+                </button>}
               </div>
             ))}
           </div>
 
-
-{/*  preview image      */}    
+          {/* Preview full image */}
           {showfullimg && (
-  <div
-    onClick={() => setshowfullimg(false)} // Dismiss when clicking outside
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-  >
-    <img
-      src={fullimgsrc}
-      alt="Uploaded"
-      onClick={(e) => e.stopPropagation()} // Prevent dismissal when clicking the image
-      className="max-w-full max-h-full object-contain"
-    />
-  </div>
-)}
-
+            <div
+              onClick={() => setshowfullimg(false)} // Dismiss when clicking outside
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+            >
+              <img
+                src={fullimgsrc}
+                alt="Uploaded"
+                onClick={(e) => e.stopPropagation()} // Prevent dismissal when clicking the image
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+          )}
 
           {/* Chatbox */}
-          <div className="flex items-center p-4 bg-gray-900 text-white opacity-60">
+          <div className="flex items-center p-4 bg-gray-700 text-yellow-300  opacity-40">
+            <input
+              type="file"
+              onChange={handleImageChange}
+              className="hidden"
+              id="imageUpload"
+            />
+            <label htmlFor="imageUpload" className="cursor-pointer mr-4">
+              <RiImageAddFill size={24} />
+            </label>
             <input
               type="text"
-              placeholder="Enter your message..."
+              placeholder="Type your message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleSendMessage}
-              className="flex-grow p-2 rounded-lg bg-gray-800 text-white mr-2 outline-none"
+              className="flex-grow p-2 rounded-lg bg-gray-600 text-yellow-200 focus:outline-none focus:ring focus:ring-yellow-300"
             />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <RiImageAddFill size={30} className="text-yellow-600" />
-            </label>
-            <input
-              type="file"
-              id="file-upload"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            />
-            <button onClick={handleSendMessage} className="ml-2 p-2 rounded-full bg-yellow-600 text-white hover:bg-yellow-500">
-              <FiSend size={20} />
+            <button
+              onClick={handleSendMessage}
+              className="p-2 ml-4 text-yellow-300 hover:text-yellow-500 focus:outline-none"
+            >
+              <FiSend size={24} />
             </button>
           </div>
         </div>
