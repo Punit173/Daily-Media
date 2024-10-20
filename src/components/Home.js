@@ -6,6 +6,8 @@ import { ref as dbRef, set, push, onValue } from "firebase/database";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { FiSend } from 'react-icons/fi';  // Send icon
 import { RiImageAddFill } from 'react-icons/ri';  // Image upload icon
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import './Home.css';
 
 const Home = () => {
@@ -16,14 +18,34 @@ const Home = () => {
   const [showfullimg,setshowfullimg]=useState(false);
   const [fullimgsrc,setfullimgsrc]=useState("");
    // Example list of users for direct messages
-   const [users,setusers]=useState([]);
-
-  const username = localStorage.getItem("email"); // Current user
+  const [users,setusers]=useState([]);
+// Current user
+  const username = localStorage.getItem("email"); 
+  //for small screen replace with button for sidebar
+  const [sidebar,setsidebar]=useState(true);
+  //content for sidebar visible on click of sidebar button using this usestate
+  const [sidebarcont,setsidebarcont]=useState(true);
 
  
 
   // Function to retrieve messages from Firebase and filter them based on the selected user
   useEffect(() => {
+    //check width of screen
+    const screenWidth = window.innerWidth;
+    if (screenWidth > 768) {
+      setsidebar(false); // Set sidebar to false for smaller screens
+    } else {
+      setsidebar(true); // Set sidebar to true for larger screens
+    }
+    console.log(sidebar); // Note: This may not log the updated state immediately
+    
+    //////////////////////
+
+
+
+
+
+
     const msgRef = dbRef(db, 'dailymedia/');
     onValue(msgRef, (snapshot) => {
       const data = snapshot.val();
@@ -132,7 +154,7 @@ const Home = () => {
       </video>
       {/* Navbar */}
       <nav className="flex items-center justify-between bg-gray-900 text-white p-4 shadow-md opacity-70">
-        <div className="text-xl font-semibold">DailyMedia</div>
+        {sidebar ? (<button onClick={()=>{setsidebarcont(!sidebarcont)}}><FontAwesomeIcon icon={faBars} /></button>):(<div className="text-xl font-semibold">DailyMedia</div>)}
         <ul className="flex space-x-6">
           <li className="hover:text-yellow-600 cursor-pointer">Home</li>
           <li className="hover:text-yellow-600 cursor-pointer">Profile</li>
@@ -142,7 +164,7 @@ const Home = () => {
 
       <div className="flex flex-grow overflow-hidden ">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-800 text-yellow-300 p-6 hidden md:block opacity-80">
+        <div className={`w-64 bg-gray-800 text-yellow-300 p-6 ${sidebarcont && 'hidden'} md:block opacity-80`}>
           <h3 className="text-lg font-bold mb-4">Direct Messages</h3>
           <ul className="space-y-4">
             {users.map((user) => (
