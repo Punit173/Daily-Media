@@ -173,7 +173,7 @@ const Home = () => {
              className={`cursor-pointer ${user === selectedUser ? 'bg-yellow-600 text-black' : ''} p-2 rounded overflow-hidden text-ellipsis whitespace-nowrap`}
              onClick={() => handleUserSelect(user)}
            >
-             {user}
+             {(username===user)?"Me":user}
            </li>
            
             ))}
